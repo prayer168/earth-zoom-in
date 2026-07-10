@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Earth to Chloroplast Zoom</title>
+  <link rel="preload" as="image" href="frame-01.png">
+  <link rel="preload" as="image" href="frame-02.png">
+  <link rel="preload" as="image" href="frame-03.png">
+  <link rel="preload" as="image" href="frame-04.png">
+  <link rel="preload" as="image" href="frame-05.png">
+  <link rel="preload" as="image" href="frame-06.png">
+  <link rel="preload" as="image" href="frame-07.png">
+  <link rel="preload" as="image" href="frame-08.png">
+  <link rel="preload" as="image" href="frame-09.png">
+  <link rel="preload" as="image" href="frame-10.png">
+  <link rel="preload" as="image" href="frame-11.png">
+  <link rel="preload" as="image" href="frame-12.png">
+  <link rel="preload" as="image" href="frame-13.png">
+  <link rel="preload" as="image" href="frame-14.png">
+  <link rel="preload" as="image" href="frame-15.png">
+  <link rel="preload" as="image" href="frame-16.png">
+  <link rel="preload" as="image" href="frame-17.png">
+  <link rel="preload" as="image" href="frame-18.png">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090d;
+      --panel: rgba(9, 13, 19, 0.72);
+      --line: rgba(255, 255, 255, 0.16);
+      --text: #f3f7fb;
+      --muted: #aeb8c4;
+      --accent: #88d7b4;
+      --gold: #f4c56b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Noto Sans TC", sans-serif;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
+
+    .slides {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+    }
+
+    .slides::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slide {
+      position: relative;
+      flex: 0 0 100vw;
+      width: 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      background: #000;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.74), rgba(0, 0, 0, 0));
+      pointer-events: none;
+    }
+
+    .title {
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .counter {
+      flex: 0 0 auto;
+      min-width: 66px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      position: fixed;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      pointer-events: none;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: rgba(6, 9, 13, 0.62);
+      color: var(--text);
+      border-radius: 8px;
+      cursor: pointer;
+      backdrop-filter: blur(18px);
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+      pointer-events: auto;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(136, 215, 180, 0.65);
+      background: rgba(11, 17, 24, 0.82);
+    }
+
+    .nav button {
+      width: 46px;
+      height: 46px;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .timeline {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(18, minmax(42px, 1fr));
+      gap: 6px;
+      padding: 10px;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0));
+    }
+
+    .thumb {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 6px;
+      opacity: 0.66;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb.active {
+      opacity: 1;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(136, 215, 180, 0.18), 0 0 26px rgba(244, 197, 107, 0.18);
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        align-items: flex-start;
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 15px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+      }
+
+      .counter {
+        min-width: 56px;
+        font-size: 12px;
+      }
+
+      .nav {
+        padding: 0 8px;
+      }
+
+      .nav button {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+      }
+
+      .timeline {
+        grid-template-columns: repeat(9, minmax(30px, 1fr));
+        gap: 5px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="Earth to chloroplast zoom storyboard">
+    <div class="slides" id="slides"></div>
+
+    <header class="topbar">
+      <div class="title">
+        <h1 id="frameTitle">地球到葉綠體</h1>
+        <div class="subtitle">18 張電影感寫實 zoom 分鏡</div>
+      </div>
+      <div class="counter" id="counter">01 / 18</div>
+    </header>
+
+    <nav class="nav" aria-label="Slide navigation">
+      <button id="prev" type="button" aria-label="Previous frame">&#8249;</button>
+      <button id="next" type="button" aria-label="Next frame">&#8250;</button>
+    </nav>
+
+    <div class="timeline" id="timeline" aria-label="Frame thumbnails"></div>
+  </main>
+
+  <script>
+    const frames = [
+      "地球全景",
+      "東亞上空",
+      "台灣全島",
+      "台灣城市",
+      "校園上空",
+      "自然教室外",
+      "進入自然教室",
+      "靠近教室海報",
+      "海報全景",
+      "進入海報世界",
+      "水滴與葉片",
+      "水滴表面",
+      "水滴內部",
+      "水分子世界",
+      "葉片細胞",
+      "植物細胞內部",
+      "葉綠體內部",
+      "最終微觀宇宙"
+    ];
+
+    const slides = document.querySelector("#slides");
+    const timeline = document.querySelector("#timeline");
+    const counter = document.querySelector("#counter");
+    const frameTitle = document.querySelector("#frameTitle");
+    let current = 0;
+
+    function filename(index) {
+      return `frame-${String(index + 1).padStart(2, "0")}.png`;
+    }
+
+    frames.forEach((title, index) => {
+      const slide = document.createElement("section");
+      slide.className = "slide";
+      slide.setAttribute("aria-label", `${index + 1}. ${title}`);
+
+      const image = document.createElement("img");
+      image.src = filename(index);
+      image.alt = title;
+      slide.appendChild(image);
+      slides.appendChild(slide);
+
+      const thumb = document.createElement("button");
+      thumb.className = "thumb";
+      thumb.type = "button";
+      thumb.setAttribute("aria-label", `${index + 1}. ${title}`);
+      thumb.innerHTML = `<img src="${filename(index)}" alt="">`;
+      thumb.addEventListener("click", () => goTo(index));
+      timeline.appendChild(thumb);
+    });
+
+    const thumbs = Array.from(document.querySelectorAll(".thumb"));
+
+    function update(index) {
+      current = Math.max(0, Math.min(frames.length - 1, index));
+      frameTitle.textContent = frames[current];
+      counter.textContent = `${String(current + 1).padStart(2, "0")} / ${frames.length}`;
+      thumbs.forEach((thumb, thumbIndex) => {
+        thumb.classList.toggle("active", thumbIndex === current);
+      });
+    }
+
+    function goTo(index) {
+      update(index);
+      slides.scrollTo({
+        left: window.innerWidth * current,
+        behavior: "smooth"
+      });
+    }
+
+    document.querySelector("#prev").addEventListener("click", () => goTo(current - 1));
+    document.querySelector("#next").addEventListener("click", () => goTo(current + 1));
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === " ") {
+        event.preventDefault();
+        goTo(current + 1);
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goTo(current - 1);
+      }
+    });
+
+    let scrollTimer = 0;
+    slides.addEventListener("scroll", () => {
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        update(Math.round(slides.scrollLeft / window.innerWidth));
+      }, 70);
+    });
+
+    update(0);
+  </script>
+</body>
+</html>
