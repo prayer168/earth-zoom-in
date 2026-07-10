@@ -3,180 +3,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Earth to Chloroplast Continuous Zoom</title>
+  <title>Earth Zoom</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #05070a;
-      --text: #f5f8fb;
-      --muted: #aab5c2;
-      --line: rgba(255,255,255,.16);
-      --panel: rgba(11,15,22,.78);
-      --accent: #8fd7b3;
-    }
-
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, "Noto Sans TC", sans-serif;
-    }
-
-    main {
-      min-height: 100vh;
-    }
-
-    .hero {
-      min-height: 100vh;
-      display: grid;
-      grid-template-rows: 1fr auto;
+      width: 100%;
+      min-height: 100%;
       background: #000;
     }
 
-    .video-wrap {
-      position: relative;
-      min-height: 0;
-      display: grid;
-      place-items: center;
+    body {
       overflow: hidden;
+    }
+
+    main {
+      width: 100vw;
+      height: 100vh;
+      background: #000;
     }
 
     video {
       width: 100%;
       height: 100%;
-      max-height: 100vh;
       object-fit: contain;
-      background: #000;
-      display: block;
-    }
-
-    .top {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 2;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 18px;
-      background: linear-gradient(180deg, rgba(0,0,0,.76), rgba(0,0,0,0));
-      pointer-events: none;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(18px, 2.2vw, 30px);
-      line-height: 1.15;
-      letter-spacing: 0;
-    }
-
-    .meta {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .badge {
-      flex: 0 0 auto;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 8px;
-      padding: 8px 10px;
-      color: var(--accent);
-      font-size: 13px;
-      backdrop-filter: blur(16px);
-    }
-
-    .details {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 42px 0 56px;
-    }
-
-    .details h2 {
-      margin: 0 0 14px;
-      font-size: 20px;
-      letter-spacing: 0;
-    }
-
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 26px;
-    }
-
-    .links a {
-      color: var(--text);
-      text-decoration: none;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 10px 12px;
-      background: rgba(255,255,255,.05);
-    }
-
-    .links a:hover {
-      border-color: rgba(143,215,179,.75);
-    }
-
-    .sheet {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid var(--line);
       display: block;
       background: #000;
-    }
-
-    @media (max-width: 720px) {
-      .top {
-        padding: 12px;
-      }
-
-      .badge {
-        display: none;
-      }
-
-      .details {
-        width: min(100% - 24px, 1120px);
-        padding-top: 28px;
-      }
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <main>
-    <section class="hero" aria-label="Continuous zoom video">
-      <div class="top">
-        <div>
-          <h1>地球到葉綠體：連續 Zoom In</h1>
-          <div class="meta">18 張圖串成一支約 54 秒的絲滑推進影片</div>
-        </div>
-        <div class="badge">Continuous Zoom</div>
-      </div>
-      <div class="video-wrap">
-        <video controls autoplay muted playsinline poster="contact-sheet.jpg">
-          <source src="earth-to-chloroplast-continuous-zoom.mp4" type="video/mp4">
-        </video>
-      </div>
-    </section>
-
-    <section class="details">
-      <h2>作品檔案</h2>
-      <div class="links">
-        <a href="earth-to-chloroplast-continuous-zoom.mp4">連續 Zoom 影片</a>
-        <a href="earth-to-chloroplast-zoom.mp4">舊版分鏡影片</a>
-        <a href="contact-sheet.jpg">18 張總覽圖</a>
-        <a href="manifest.json">分鏡清單</a>
-      </div>
-      <img class="sheet" src="contact-sheet.jpg" alt="18 張 zoom 分鏡總覽">
-    </section>
+    <video autoplay muted loop playsinline>
+      <source src="earth-to-chloroplast-continuous-zoom.mp4" type="video/mp4">
+    </video>
   </main>
+  <script>
+    const video = document.querySelector("video");
+    video.addEventListener("click", () => {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+  </script>
 </body>
 </html>
